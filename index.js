@@ -1,7 +1,10 @@
+const { response } = require('express')
 const express = require('express')
 const app = express()
 
-const persons = [
+app.use(express.json())
+
+let persons = [
     { 
         "id": 1,
         "name": "Arto Hellas", 
@@ -42,6 +45,39 @@ app.get('/api/persons/:id', (req, res) => {
         res.status(404).end()
     }
     
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    console.log('persons', persons)
+    persons = persons.filter(person => person.id != id)
+
+    res.status(204).end() // 204 no content
+})
+
+app.post('/api/persons', (req, res) => {
+    const id = Math.floor(Math.random() * Math.pow(10, 6))
+
+    const person = req.body
+    person.id = id
+
+    console.log('person.name', person.name)
+    console.log('person.name === null', person.name === null)
+
+    if ( !person.hasOwnProperty('name') || !person.hasOwnProperty('number') ) {
+        res.status(400).json({
+            error: 'content missing'
+        })
+    }
+    
+    if (persons.filter(p => p.name.toLowerCase() === person.name.toLowerCase())) {
+        res.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
+    persons.push(person)
+    res.status(204).end()
 })
 
 const PORT = 3001
