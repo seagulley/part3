@@ -1,8 +1,10 @@
 const { response } = require('express')
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
     { 
@@ -60,9 +62,6 @@ app.post('/api/persons', (req, res) => {
 
     const person = req.body
     person.id = id
-
-    console.log('person.name', person.name)
-    console.log('person.name === null', person.name === null)
 
     if ( !person.hasOwnProperty('name') || !person.hasOwnProperty('number') ) {
         res.status(400).json({
